@@ -1,1 +1,63 @@
 
+package application;
+import java.awt.Color;
+import java.util.Random;
+
+import javax.sound.sampled.Line;
+
+import javafx.scene.Scene;
+import javafx.scene.layout.Pane;
+import javafx.stage.Stage;
+
+public class ClockHands<Pane> extends Application {
+    @Override
+    public void start(Stage primaryStage) {
+        Pane pane = new Pane();
+
+        
+        Random rand = new Random();
+        int hour = rand.nextInt(12); // 0-11
+        int minute = rand.nextInt(31); // 0-30
+
+        
+        double hourAngle = (hour % 12 + minute / 60.0) * 360 / 12;
+        double minuteAngle = minute * 360 / 60;
+
+        
+        double centerX = 200;
+        double centerY = 200;
+        double clockRadius = 150;
+
+        
+        Line hourHand = new Line(centerX, centerY,
+            centerX + clockRadius * 0.5 * Math.cos(Math.toRadians(hourAngle - 90)),
+            centerY + clockRadius * 0.5 * Math.sin(Math.toRadians(hourAngle - 90)));
+        ((Object) hourHand).setStroke(Color.BLACK);
+        ((Object) hourHand).setStrokeWidth(4);
+
+        
+        Line minuteHand = new Line(centerX, centerY,
+            centerX + clockRadius * 0.8 * Math.cos(Math.toRadians(minuteAngle - 90)),
+            centerY + clockRadius * 0.8 * Math.sin(Math.toRadians(minuteAngle - 90)));
+        ((Object) minuteHand).setStroke(Color.BLACK);
+        ((Object) minuteHand).setStrokeWidth(2);
+
+        
+        ((Object) pane).addAll(hourHand, minuteHand);
+
+        
+        Scene scene = new Scene(pane, 400, 400);
+        ((Object) primaryStage).setTitle("Clock Hands");
+        primaryStage.setScene(scene);
+        ((Object) primaryStage).show();
+    }
+
+    public static void main(String[] args) {
+        launch(args);
+    }
+
+	private static void launch(String[] args) {
+		
+		
+	}
+}
