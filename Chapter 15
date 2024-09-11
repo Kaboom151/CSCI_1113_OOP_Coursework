@@ -1,0 +1,76 @@
+//RECTANGLE TRACE 
+import javafx.animation.PathTransition;
+import javafx.animation.Timeline;
+import javafx.application.Application;
+import javafx.scene.Scene;
+import javafx.scene.input.MouseButton;
+import javafx.scene.layout.Pane;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Polygon;
+import javafx.scene.shape.Rectangle;
+import javafx.stage.Stage;
+import javafx.util.Duration;
+
+public class PentagonAnimation extends Application {
+    private boolean isPaused = false;
+    private PathTransition pathTransition;
+
+    @Override
+    public void start(Stage primaryStage) {
+        Pane pane = new Pane();
+
+        // Create a pentagon
+        Polygon pentagon = new Polygon();
+        pentagon.getPoints().addAll(
+            200.0, 50.0,
+            300.0, 150.0,
+            250.0, 300.0,
+            150.0, 300.0,
+            100.0, 150.0
+        );
+        pentagon.setStroke(Color.BLACK);
+        pentagon.setFill(null);
+
+        // Create a rectangle
+        Rectangle rectangle = new Rectangle(20, 20, Color.BLUE);
+
+        // Create a path transition
+        pathTransition = new PathTransition();
+        pathTransition.setDuration(Duration.seconds(5));
+        pathTransition.setPath(pentagon);
+        pathTransition.setNode(rectangle);
+        pathTransition.setCycleCount(Timeline.INDEFINITE);
+        pathTransition.setAutoReverse(false);
+
+        // Change opacity as the rectangle moves
+        pathTransition.currentTimeProperty().addListener((obs, oldTime, newTime) -> {
+            double progress = newTime.toMillis() / pathTransition.getCycleDuration().toMillis();
+            rectangle.setOpacity(1 - progress);
+        });
+
+        pane.getChildren().addAll(pentagon, rectangle);
+
+        // Handle mouse clicks to pause/resume animation
+        pane.setOnMouseClicked(event -> {
+            if (event.getButton() == MouseButton.PRIMARY) {
+                if (isPaused) {
+                    pathTransition.play();
+                } else {
+                    pathTransition.pause();
+                }
+                isPaused = !isPaused;
+            }
+        });
+
+        Scene scene = new Scene(pane, 400, 400);
+        primaryStage.setTitle("Pentagon Animation");
+        primaryStage.setScene(scene);
+        primaryStage.show();
+
+        pathTransition.play();
+    }
+
+    public static void main(String[] args) {
+        launch(args);
+    }
+}
