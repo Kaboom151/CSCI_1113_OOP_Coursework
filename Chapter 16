@@ -1,0 +1,63 @@
+//Timer
+import javafx.application.Application;
+import javafx.beans.property.IntegerProperty;
+import javafx.beans.property.SimpleIntegerProperty;
+import javafx.scene.Scene;
+import javafx.scene.control.TextField;
+import javafx.scene.layout.VBox;
+import javafx.stage.Stage;
+import javafx.scene.media.Media;
+import javafx.scene.media.MediaPlayer;
+import javafx.util.Duration;
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
+
+public class Timer extends Application {
+
+    private MediaPlayer mediaPlayer;
+
+    @Override
+    public void start(Stage primaryStage) {
+        TextField textField = new TextField();
+        textField.setPromptText("Enter time in seconds");
+
+        textField.setOnAction(event -> {
+            int timeInSeconds = Integer.parseInt(textField.getText());
+            startCountdown(timeInSeconds);
+        });
+
+        VBox root = new VBox(textField);
+        Scene scene = new Scene(root, 300, 200);
+
+        primaryStage.setTitle("Countdown Timer");
+        primaryStage.setScene(scene);
+        primaryStage.show();
+    }
+
+    private void startCountdown(int timeInSeconds) {
+        IntegerProperty timeLeft = new SimpleIntegerProperty(timeInSeconds);
+
+        Timeline timeline = new Timeline(new KeyFrame(Duration.seconds(1), event -> {
+            if (timeLeft.get() > 0) {
+                System.out.println(timeLeft.get());
+                timeLeft.set(timeLeft.get() - 1);
+            } else {
+                playMusic();
+            }
+        }));
+        timeline.setCycleCount(timeInSeconds + 1);
+        timeline.play();
+    }
+
+    private void playMusic() {
+        String musicUrl = "https://live.example.pearsoncmg.com/common/audio/anthem/anthem0.mp3";
+        Media media = new Media(musicUrl);
+        mediaPlayer = new MediaPlayer(media);
+        mediaPlayer.setCycleCount(MediaPlayer.INDEFINITE);
+        mediaPlayer.play();
+    }
+
+    public static void main(String[] args) {
+        launch(args);
+    }
+}
